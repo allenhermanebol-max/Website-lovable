@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Eidklinge: Glut der Nachtwacht</title>
+    <link rel="stylesheet" href="/style.css" />
+  </head>
+  <body>
+    <div id="app">
+      <main id="startScreen" class="screen screen-start active" aria-label="Startbildschirm">
+        <div class="start-art" aria-hidden="true">
+          <div class="blade-sigil"></div>
+          <div class="ember-line"></div>
+        </div>
+
+        <section class="start-panel">
+          <p class="overline">Originales 3D-Fantasyduell</p>
+          <h1>Eidklinge:<span> Glut der Nachtwacht</span></h1>
+          <p class="intro">
+            Eine vergessene Nachtwache schuetzt die fuenf Eidfeuer. Fuehre die
+            Eidklinge durch Arenen aus Stein, Dornen, Asche und Glas, bevor der
+            Glutregent die Wacht bricht.
+          </p>
+
+          <div class="difficulty" aria-label="Schwierigkeitsgrad">
+            <label><input type="radio" name="difficulty" value="easy" />Leicht</label>
+            <label><input type="radio" name="difficulty" value="normal" checked />Normal</label>
+            <label><input type="radio" name="difficulty" value="hard" />Schwer</label>
+            <label><input type="radio" name="difficulty" value="nightmare" />Albtraum</label>
+          </div>
+
+          <div class="menu-actions">
+            <button id="startButton" class="button primary">Spiel starten</button>
+            <button id="guideButton" class="button">Anleitung</button>
+            <button id="settingsButton" class="button">Einstellungen</button>
+          </div>
+
+          <div class="menu-card">
+            <strong>Beste Wacht:</strong>
+            <span id="bestLevelLabel">Noch kein Fortschritt</span>
+          </div>
+        </section>
+
+        <aside id="guidePanel" class="side-panel hidden">
+          <button class="icon-button close-panel" data-close="guidePanel" aria-label="Anleitung schliessen">x</button>
+          <h2>Anleitung</h2>
+          <p>Besiege alle Gegner einer Arena, um das naechste Eidfeuer zu erreichen.</p>
+          <dl>
+            <dt>W, A, S, D</dt><dd>Bewegen</dd>
+            <dt>Maus</dt><dd>Kamera und Blickrichtung</dd>
+            <dt>Linke Maustaste</dt><dd>Angriff / Combo</dd>
+            <dt>Rechte Maustaste oder Shift</dt><dd>Blocken</dd>
+            <dt>Leertaste</dt><dd>Ausweichen</dd>
+            <dt>ESC</dt><dd>Pause</dd>
+          </dl>
+        </aside>
+
+        <aside id="settingsPanel" class="side-panel hidden">
+          <button class="icon-button close-panel" data-close="settingsPanel" aria-label="Einstellungen schliessen">x</button>
+          <h2>Einstellungen</h2>
+          <label class="setting-row">
+            <span>Lautstaerke</span>
+            <input id="volumeSlider" type="range" min="0" max="1" step="0.05" value="0.65" />
+          </label>
+          <label class="setting-row">
+            <span>Grafikqualitaet</span>
+            <select id="qualitySelect">
+              <option value="low" selected>60 FPS</option>
+              <option value="medium">Ausgewogen</option>
+              <option value="high">Hoch</option>
+            </select>
+          </label>
+          <p class="small-note">60 FPS reduziert Schatten, Pixeldichte und Effektmenge fuer fluessigeres Spielen.</p>
+        </aside>
+      </main>
+
+      <section id="gameScreen" class="game-screen" aria-label="Spiel">
+        <div id="canvasMount" class="canvas-mount"></div>
+
+        <div id="hud" class="hud hidden">
+          <div class="hud-top">
+            <div class="stat-stack">
+              <div class="stat-label"><span>Lebenspunkte</span><span id="healthText">120 / 120</span></div>
+              <div class="bar health"><span id="healthFill"></span></div>
+              <div class="stat-label"><span>Ausdauer</span><span id="staminaText">100 / 100</span></div>
+              <div class="bar stamina"><span id="staminaFill"></span></div>
+            </div>
+
+            <div class="level-card">
+              <span id="levelLabel">Level 1</span>
+              <strong id="arenaLabel">Trainingsarena</strong>
+              <small id="difficultyLabel">Normal</small>
+            </div>
+
+            <div class="enemy-card">
+              <span id="enemyName">Kein Gegner</span>
+              <div class="bar enemy"><span id="enemyFill"></span></div>
+              <small id="enemyCount">0 Gegner</small>
+            </div>
+          </div>
+
+          <div class="combo-strip">
+            <span id="weaponName">Eidklinge</span>
+            <span id="comboLabel">Bereit</span>
+            <span id="blockLabel">Block frei</span>
+            <span id="fpsLabel">FPS --</span>
+          </div>
+
+          <div class="help-strip">
+            WASD bewegen · Maus drehen · LMB Angriff · RMB/Shift blocken · Space ausweichen · ESC Pause
+          </div>
+        </div>
+
+        <div id="messageToast" class="message-toast hidden"></div>
+      </section>
+
+      <section id="levelOverlay" class="overlay hidden" aria-live="polite">
+        <div class="modal">
+          <p class="overline" id="levelOverline">Eidfeuer entfacht</p>
+          <h2 id="levelTitle">Arena gemeistert</h2>
+          <p id="levelStory">Die Wacht haelt.</p>
+          <button id="nextLevelButton" class="button primary">Naechstes Level</button>
+        </div>
+      </section>
+
+      <section id="pauseOverlay" class="overlay hidden" aria-label="Pause">
+        <div class="modal compact">
+          <h2>Pause</h2>
+          <p>Atme durch. Die Gegner bewegen sich erst weiter, wenn du zurueckkehrst.</p>
+          <button id="resumeButton" class="button primary">Weiterkaempfen</button>
+          <button id="restartPauseButton" class="button">Neustart</button>
+          <button id="backToMenuButton" class="button">Zum Startbildschirm</button>
+        </div>
+      </section>
+
+      <section id="gameOverOverlay" class="overlay hidden" aria-label="Game Over">
+        <div class="modal">
+          <p class="overline">Die Nachtwacht faellt</p>
+          <h2>Game Over</h2>
+          <p id="gameOverText">Die Eidklinge ist verstummt.</p>
+          <button id="restartButton" class="button primary">Neustart</button>
+          <button id="gameOverMenuButton" class="button">Zum Startbildschirm</button>
+        </div>
+      </section>
+
+      <section id="victoryOverlay" class="overlay hidden" aria-label="Sieg">
+        <div class="modal">
+          <p class="overline">Alle Eidfeuer brennen</p>
+          <h2>Sieg der Nachtwacht</h2>
+          <p>
+            Der Glutregent ist gefallen. Deine Eidklinge wird in den Hallen der
+            Wacht als erster Morgenstrahl besungen.
+          </p>
+          <button id="victoryRestartButton" class="button primary">Erneut spielen</button>
+          <button id="victoryMenuButton" class="button">Zum Startbildschirm</button>
+        </div>
+      </section>
+    </div>
+
+    <script type="module" src="/script.js"></script>
+  </body>
+</html>
