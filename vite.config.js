@@ -1,7 +1,7 @@
 import { defineConfig } from "vite";
 
 export default defineConfig({
-  base: "/eidklinge-glut-der-nachtwacht/",
+  base: "/Website-lovable/",
   build: {
     chunkSizeWarningLimit: 900
   }

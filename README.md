@@ -6,9 +6,7 @@ Ein eigenständiges 3D-Fantasy-Schwertkampfspiel für den Browser. Du kämpfst m
 
 GitHub Pages:
 
-https://BENUTZERNAME.github.io/eidklinge-glut-der-nachtwacht/
-
-Ersetze `BENUTZERNAME` durch den GitHub-Benutzernamen des Repository-Besitzers, sobald das Repository veröffentlicht ist.
+https://allenhermanebol-max.github.io/Website-lovable/
 
 ## Steuerung
 
