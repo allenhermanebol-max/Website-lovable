@@ -6,7 +6,7 @@ Ein eigenständiges 3D-Fantasy-Schwertkampfspiel für den Browser. Du kämpfst m
 
 GitHub Pages:
 
-https://allenhermanebol-max.github.io/Website-lovable/
+https://allenhermanebol-max.github.io/FantasyGameT_T/
 
 ## Steuerung
 
